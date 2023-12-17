@@ -8,7 +8,7 @@ using WorldLeague.Repository;
 
 #nullable disable
 
-namespace WorldLeague.Migrations
+namespace WorldLeagueAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

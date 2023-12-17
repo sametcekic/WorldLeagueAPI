@@ -17,21 +17,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return await _entities.Where(s => s.IsActive == isActive).AsQueryable().ToListAsync();
     }
-
-    public void Delete(TEntity entity)
-    {
-        entity.IsActive = false;
-    }
-
-    public  async Task<List<TEntity>> FilterByAsync(Expression<Func<TEntity, bool>> predicate, bool isActive = true)
-    {
-        return await _entities.Where(predicate).Where(s => s.IsActive == isActive).ToListAsync();
-    }
-
-    public async Task<TEntity> FindByAsync(Expression<Func<TEntity, bool>> predicate, bool isActive = true)
-    {
-        return await _entities.Where(predicate).Where(s => s.IsActive == isActive).SingleOrDefaultAsync();
-    }
+     
 
     public async Task<TEntity> GetByIdAsync(int id, bool isActive = true)
     {
@@ -41,5 +27,6 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public async Task SaveAsync(TEntity entity)
     {
         await _entities.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
     }
 }

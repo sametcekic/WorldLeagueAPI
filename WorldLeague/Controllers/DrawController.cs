@@ -20,12 +20,12 @@ namespace WorldLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Group>>> Post(string draverName, int numberOfGroups)
         {
-            if (numberOfGroups != 8 || numberOfGroups != 4)
+            if (numberOfGroups.Equals(8) || numberOfGroups.Equals(4))
             {
-                return BadRequest(Messages.NumberOfGroupsIsNotValid);
-            }
-            else
                 return await _drawService.CreateDraw(draverName, numberOfGroups);
+             }
+            else
+                return BadRequest(Messages.NumberOfGroupsIsNotValid);
         }
 
     }

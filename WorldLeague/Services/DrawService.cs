@@ -8,19 +8,22 @@ public class DrawService : IDrawService
     private readonly IDrawRepository _drawRepository;
     private readonly ICountryService _countryService;
     private readonly ITeamService _teamService;
+    private readonly IGroupService _groupService;
 
-    public DrawService( ITeamService teamService, ICountryService countryService, IDrawRepository drawRepository)
+    public DrawService(ITeamService teamService, ICountryService countryService, IDrawRepository drawRepository, IGroupService groupService)
     {
         _teamService = teamService;
         _countryService = countryService;
         _drawRepository = drawRepository;
+        _groupService = groupService;
     }
 
     public async Task<List<Group>> CreateDraw(string drawerName, int groupCount)
     {
         var teams = await _teamService.GetAllTeams();
         var countries = await _countryService.GetAllCountries();
-
+        var groups = await _groupService.GetAllGroups();
+ 
         List<Group> responseList = new List<Group>();
 
         int teamsPerGroup = teams.Count / groupCount;
@@ -31,34 +34,46 @@ public class DrawService : IDrawService
 
         if (groupCount == 8)
         {
-            for (int i = 0; i < groupCount; i++)
+            for (int i = 0; i < 4; i++)
             {
+                responseList.Add(groups[i]);
+                var responseTeams = new List<Team>();
+                
                 foreach (Country country in countries)
                 {
-                    responseList[i].Teams.Add(teams.First(i => i.CountryId == country.Id));
-                    teams.Remove(teams.First());
+                     var responseTeam = teams.First(i => i.CountryId == country.Id);
+                    responseTeams.Add(responseTeam);
+                    teams.Remove(responseTeam);
                 }
+                responseList[i].Teams = responseTeams;
+               
             }
 
         }
         else if (groupCount == 4)
         {
-            for (int i = 0; i < groupCount; i++)
+            for (int i = 0; i < 2; i++)
             {
+                responseList.Add(groups[i]);
+                var responseTeams = new List<Team>();
+
                 foreach (Country country in countries)
                 {
-                    responseList[i].Teams.Add(teams.First(i => i.CountryId == country.Id));
+                    var responseTeam = teams.First(i => i.CountryId == country.Id);
+                    responseTeams.Add(responseTeam);
+                    teams.Remove(responseTeam);
 
-                    teams.Remove(teams.First());
-
-                    responseList[i].Teams.Add(teams.First(i => i.CountryId == country.Id));
-
-                    teams.Remove(teams.First());
+                    responseTeam = teams.First(i => i.CountryId == country.Id);
+                    responseTeams.Add(responseTeam);
+                    teams.Remove(responseTeam);
                 }
+                responseList[i].Teams = responseTeams;
             }
         }
 
-        _drawRepository.SaveAsync(new Draw() { DrawerName = drawerName, NumberOfGroups = groupCount });
+       await _drawRepository.SaveAsync(new Draw() { DrawerName = drawerName, NumberOfGroups = groupCount, CreatedDate=DateTime.Now });
+
+        
         return responseList;
     }
 }

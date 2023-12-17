@@ -9,11 +9,11 @@ using WorldLeague.Repository;
 
 #nullable disable
 
-namespace WorldLeague.Migrations
+namespace WorldLeagueAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231217163701_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20231217191226_NewMigration")]
+    partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
